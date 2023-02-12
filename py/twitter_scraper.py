@@ -8,8 +8,8 @@ import os
 
 def create_twitter_client():
 
-    dotenv_path = os.path.join(os.path.dirname(__file__), '../.env')
-    load_dotenv(dotenv_path)
+    # dotenv_path = os.path.join(os.path.dirname(__file__), '../.env')
+    # load_dotenv(dotenv_path)
 
     consumer_key = os.getenv('CONSUMER_KEY')
     consumer_secret_key = os.getenv('CONSUMER_SECRET')
@@ -67,7 +67,7 @@ def get_tweets_from_user(username="CoinDesk"):
 
             (
             df[["username", 'name', "user_id", "tweet_id", "text", "created_at"]]
-            .to_csv("dwd_user_tweets__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H"))
+            .to_csv("data/dwd_user_tweets__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H"))
                     , index=False)
             )
 
@@ -121,7 +121,7 @@ def get_my_timeline():
             df = df.merge(usernames_df, how="left", left_on="user_id", right_on="id")
             (
             df[["username", "name", "user_id", "tweet_id", "text", "created_at"]]
-            .to_csv("dwd_timeline__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H"))
+            .to_csv("data/dwd_timeline__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H"))
                     , index=False)
             )
 
