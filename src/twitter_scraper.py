@@ -2,14 +2,9 @@ import pandas as pd
 from datetime import datetime, timedelta
 import pytz
 import tweepy
-from pprint import pprint
-from dotenv import load_dotenv
 import os
 
 def create_twitter_client():
-
-    # dotenv_path = os.path.join(os.path.dirname(__file__), '../.env')
-    # load_dotenv(dotenv_path)
 
     consumer_key = os.getenv('CONSUMER_KEY')
     consumer_secret_key = os.getenv('CONSUMER_SECRET')
@@ -135,6 +130,3 @@ def get_my_timeline():
 
     except Exception as err:
         print(f"This is the error message: {err}".format(err))
-
-
-get_my_timeline()
