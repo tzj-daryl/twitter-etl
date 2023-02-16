@@ -21,7 +21,7 @@ def main():
 
 
     # Test 
-    get_tweets_from_user(db_table='dwd_tweet__hi_dev')
+    get_tweets_from_user(db_table='dwd_tweet__hi_dev',username='Cointelegraph')
 
 
 

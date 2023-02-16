@@ -29,15 +29,15 @@ dag = DAG(
 get_my_timeline__1 = PythonOperator(
     task_id="get_my_timeline"
     , python_callable=get_my_timeline
-    , op_kwargs={'db_table': 'dwd_tweet__hi_dev'}
+    , op_kwargs={'db_table': 'dwd_tweet__hi'}
     , dag=dag
 )
 
 # Task 2
 get_tweets_from_user__2 = PythonOperator(
-    task_id="get_tweets_from_coindesk"
+    task_id="get_tweets_from_user"
     , python_callable=get_tweets_from_user
-    , op_kwargs={'db_table': 'dwd_tweet__hi_dev'}
+    , op_kwargs={'db_table': 'dwd_tweet__hi'}
     , dag=dag
 )
 

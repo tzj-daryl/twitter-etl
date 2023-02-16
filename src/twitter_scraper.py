@@ -85,11 +85,10 @@ def get_my_timeline(db_table):
 
             # Insert into MySQL DB
             engine = connect_to_db()
-            
-            rowsInserted = df[["username", "name", "user_id", "tweet_id", "text", "created_at"]].to_sql(name=db_table, con=engine, if_exists='append', index=False)
-            # .to_csv("data/dwd_timeline__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H")), index=False)
-
-            print(f"{rowsInserted} rows inserted into {db_table}")     
+            with engine.connect() as connection:
+                df[["username", "name", "user_id", "tweet_id", "text", "created_at"]].to_sql(name=db_table, con=connection, if_exists='append', index=False)
+                # .to_csv("data/dwd_timeline__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H")), index=False)
+                print(f"{len(df.index)} rows inserted into {db_table}")     
 
 
         elif tweets["meta"]["result_count"] == 0:
@@ -139,12 +138,12 @@ def get_tweets_from_user(db_table, username="CoinDesk"):
             df['name'] = target_user['data']['name']
             df = df.rename({"id": "tweet_id", "author_id": "user_id"}, axis=1)
 
+            # Insert into MySQL DB
             engine = connect_to_db()
-
-            rowsInserted = df[["username", 'name', "user_id", "tweet_id", "text", "created_at"]].to_sql(name=db_table, con=engine, if_exists='append', index=False)
-            # .to_csv("data/dwd_user_tweets__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H")), index=False)
-
-            print(f"{rowsInserted} rows inserted into {db_table}")
+            with engine.connect() as connection:
+                rowsInserted = df[["username", "name", "user_id", "tweet_id", "text", "created_at"]].to_sql(name=db_table, con=connection, if_exists='append', index=False)
+                # .to_csv("data/dwd_user_tweets__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H")), index=False)
+                print(f"{len(df.index)} rows inserted into {db_table}")
 
         elif tweets["meta"]["result_count"] == 0:
             print(
