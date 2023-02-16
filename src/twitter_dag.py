@@ -21,19 +21,26 @@ dag = DAG(
     "twitter_dag",
     default_args=default_args,
     description="Getting started with Airflow DAGS",
-    schedule_interval="0 * * * *",
+    schedule_interval="0 * * * *", # '@hourly'
     catchup=False
 )
 
 # Task 1
-first_task = PythonOperator(
-    task_id="get_tweets_from_coindesk", python_callable=get_tweets_from_user, dag=dag
+get_my_timeline__1 = PythonOperator(
+    task_id="get_my_timeline"
+    , python_callable=get_my_timeline
+    , op_kwargs={'db_table': 'dwd_tweet__hi_dev'}
+    , dag=dag
 )
 
 # Task 2
-second_task = PythonOperator(
-    task_id="get_my_timeline", python_callable=get_my_timeline, dag=dag
+get_tweets_from_user__2 = PythonOperator(
+    task_id="get_tweets_from_coindesk"
+    , python_callable=get_tweets_from_user
+    , op_kwargs={'db_table': 'dwd_tweet__hi_dev'}
+    , dag=dag
 )
 
+
 # Set task order
-first_task >> second_task
+get_my_timeline__1 >> get_tweets_from_user__2

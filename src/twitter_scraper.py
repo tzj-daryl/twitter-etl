@@ -6,7 +6,7 @@ import os
 import sqlalchemy
 
 
-def connect_to_mysql_db():
+def connect_to_db():
     # Set the connection parameters
     username = os.getenv('MYSQL_AIRFLOW_USERNAME')
     password = os.getenv('MYSQL_AIRFLOW_PASSWORD')
@@ -16,10 +16,10 @@ def connect_to_mysql_db():
 
     try:
         # Connect to the MySQL server
-        conn = sqlalchemy.create_engine(f"mysql+mysqlconnector://{username}:{password}@{host}:{port}/{default_db}")
+        engine = sqlalchemy.create_engine(f"mysql+mysqlconnector://{username}:{password}@{host}:{port}/{default_db}")
         print('Connected to MySQL Server')
 
-        return conn
+        return engine
 
     except BaseException as e:
         print(e)
@@ -46,7 +46,7 @@ def create_twitter_client():
 
 
 
-def get_my_timeline():
+def get_my_timeline(db_table):
     client = create_twitter_client()
 
     end = datetime.now(pytz.timezone("Asia/Singapore")).replace(
@@ -84,15 +84,12 @@ def get_my_timeline():
 
 
             # Insert into MySQL DB
-            conn = connect_to_mysql_db()
-            table = 'dwd_tweet__hi'
+            engine = connect_to_db()
             
-            rowsInserted = df[["username", "name", "user_id", "tweet_id", "text", "created_at"]].to_sql(name=table, con=conn, if_exists='append', index=False)
+            rowsInserted = df[["username", "name", "user_id", "tweet_id", "text", "created_at"]].to_sql(name=db_table, con=engine, if_exists='append', index=False)
             # .to_csv("data/dwd_timeline__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H")), index=False)
 
-            conn.close()
-
-            print(f"{rowsInserted} rows inserted into {table}")     
+            print(f"{rowsInserted} rows inserted into {db_table}")     
 
 
         elif tweets["meta"]["result_count"] == 0:
@@ -107,7 +104,7 @@ def get_my_timeline():
         print(f"This is the error message: {err}".format(err))
 
 
-def get_tweets_from_user(username="CoinDesk"):
+def get_tweets_from_user(db_table, username="CoinDesk"):
     client = create_twitter_client()
 
     end = datetime.now(pytz.timezone("Asia/Singapore")).replace(
@@ -142,15 +139,12 @@ def get_tweets_from_user(username="CoinDesk"):
             df['name'] = target_user['data']['name']
             df = df.rename({"id": "tweet_id", "author_id": "user_id"}, axis=1)
 
-            conn = connect_to_mysql_db()
-            table = 'dwd_tweet__hi'
+            engine = connect_to_db()
 
-            rowsInserted = df[["username", 'name', "user_id", "tweet_id", "text", "created_at"]].to_sql(name=table, con=conn, if_exists='append', index=False)
+            rowsInserted = df[["username", 'name', "user_id", "tweet_id", "text", "created_at"]].to_sql(name=db_table, con=engine, if_exists='append', index=False)
             # .to_csv("data/dwd_user_tweets__hi_{}.csv".format(start.replace(tzinfo=None).strftime("%Y%m%dT%H")), index=False)
 
-            conn.close()
-
-            print(f"{rowsInserted} rows inserted into {table}")
+            print(f"{rowsInserted} rows inserted into {db_table}")
 
         elif tweets["meta"]["result_count"] == 0:
             print(
