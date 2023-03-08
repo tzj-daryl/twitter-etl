@@ -11,8 +11,6 @@ create table if not exists dwd_tweet__hi (
     created_at datetime
 );
 
-CREATE USER 'airflow' IDENTIFIED BY 'airflow';
-
 grant SELECT, INSERT, DELETE, UPDATE, CREATE, DROP on *.* to 'airflow';
 
 insert into data_mart.dwd_tweet__hi 
