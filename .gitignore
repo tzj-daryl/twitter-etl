@@ -1,5 +1,8 @@
 __pycache__/
-data
 .vscode
 .gitattributes
 .env
+mysql-docker/db/*
+airflow-docker/logs/*
+
+test
